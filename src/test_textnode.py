@@ -14,7 +14,7 @@ class TestTextNode(unittest.TestCase):
         self.assertIsNone(node.url)
         self.assertNotEqual(node, node3)
         self.assertNotEqual(node, node4)
-        self.assertNotEqual(node,node5)
+        self.assertNotEqual(node, node5)
 
 
 if __name__ == "__main__":
