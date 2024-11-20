@@ -1,37 +1,42 @@
 import os
 import shutil
-from textnode import TextNode, TextType
+
+from copy_static import copy_files_recursive
+from generate_content import generate_pages_recursive
 
 
-def copy_static():
-    if os.path.exists("public"):
-        shutil.rmtree("public")
-
-    os.mkdir("public")
-
-    copy_recursive("static", "public")
-
-
-def copy_recursive(src_path, dest_path):
-    for item in os.listdir(src_path):
-        src_item_path = os.path.join(src_path, item)
-        dest_item_path = os.path.join(dest_path, item)
-
-        if os.path.isfile(src_item_path):
-            print(f"Copying file: {src_item_path}")
-            shutil.copy(src_item_path, dest_item_path)
-        else:
-            print(f"Processing directory: {src_item_path}")
-            os.mkdir(dest_item_path)
-            copy_recursive(src_item_path, dest_item_path)
-
+dir_path_static = os.path.abspath("./static")
+dir_path_public = os.path.abspath("./public")
+dir_path_content = os.path.abspath("./content")
+template_path = os.path.abspath("./template.html")
 
 def main():
-    node = TextNode("Hello, world!", TextType.BOLD, "https://www.boot.dev")
+    print("Checking paths...")
+    print(f"Content directory exists: {os.path.exists(dir_path_content)}")
+    print(f"Template exists: {os.path.exists(template_path)}")
+    print(f"Current directory: {os.getcwd()}")
 
-    print(node)
+       # Already existing print statements for path checks...
 
-    copy_static()
+    # Debug: Show directory content
+    print("Content directory files:", os.listdir(dir_path_content))
+    print("Static directory files:", os.listdir(dir_path_static))
+
+    print("Deleting public directory...")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public)
+
+    print("Copying static files to public directory...")
+    try:
+        copy_files_recursive(dir_path_static, dir_path_public)
+    except Exception as e:
+        print(f"Error during copying: {e}")
+
+    print("Generating content...")
+    try:
+        generate_pages_recursive(dir_path_content, template_path, dir_path_public)
+    except Exception as e:
+        print(f"Error during content generation: {e}")
 
 
 main()

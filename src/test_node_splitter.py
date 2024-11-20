@@ -65,6 +65,23 @@ class TestInlineMarkdown(unittest.TestCase):
             new_nodes,
         )
 
+    def test_delim_italic_with_underscore(self):
+        node = TextNode("This is text with an _italic_ word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "_", TextType.ITALIC)
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word", TextType.TEXT),
+            ],
+            new_nodes,
+        )
+        
+    def test_delim_italic_with_unclosed_underscore(self):
+        node = TextNode("This is text with an _italic without closing", TextType.TEXT)
+        with self.assertRaises(ValueError):
+            split_nodes_delimiter([node], "_", TextType.ITALIC)
+
     def test_delim_bold_and_italic(self):
         node = TextNode("**bold** and *italic*", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)

@@ -9,6 +9,7 @@ from markdown_blocks import (
     block_type_olist,
     block_type_ulist,
     block_type_quote,
+    extract_title,
 )
 
 
@@ -158,6 +159,25 @@ this is paragraph text
             html,
             "<div><blockquote>This is a blockquote block</blockquote><p>this is paragraph text</p></div>",
         )
+
+
+class TestMarkdownTitleExtraction(unittest.TestCase):
+
+    def test_extract_title_success(self):
+        markdown = "# This is a Title"
+        title = extract_title(markdown)
+        self.assertEqual(title, "This is a Title")
+
+    def test_extract_title_with_spaces(self):
+        markdown = "#    Trimmed Title    "
+        title = extract_title(markdown)
+        self.assertEqual(title, "Trimmed Title")
+
+    def test_extract_title_no_h1(self):
+        markdown = "## Not an h1\nAnother line"
+        with self.assertRaises(Exception) as context:
+            extract_title(markdown)
+        self.assertTrue("no h1 header found" in str(context.exception))
 
 
 if __name__ == "__main__":
